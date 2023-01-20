@@ -11,6 +11,7 @@ const ValidationRules = (requestBody: any, files: any) => {
 
   const reqValidate = {
     title: requestBody?.title,
+    description: requestBody?.title
   };
 
   const responseValidation: any = schema.validate(reqValidate);

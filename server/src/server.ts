@@ -34,7 +34,7 @@ export default class Server
               return res.status(err.status).send({success:err.success,message:err.message});
             }
           });
-        this.app.use('/img',express.static(path.join(__dirname, 'public/uploads/gallery')));
+        this.app.use('/api/v1/img',express.static(path.join(__dirname, 'public/uploads/gallery')));
         this.app.use('/api/v1', routes);
 
     }

@@ -1,0 +1,27 @@
+@import "../../../base";
+
+.parent-elem-gallery {
+  margin-top: 20px !important;
+  margin-bottom: 30px !important;
+
+  .image-for-post {
+    width: 100% !important;
+    height: 80%;
+    object-fit: cover;
+  }
+  h4,
+  .centred-text {
+    align-items: center;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: cursive;
+  }
+  .margin-top {
+    margin-top: 40px;
+  }
+}

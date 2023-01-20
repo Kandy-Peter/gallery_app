@@ -10,10 +10,12 @@ const ValidationRules = (requestBody: any, files: any) => {
 
   const schema: joi.ObjectSchema = joi.object({
     title: joi.string().trim().required(),
+    description: joi.string().trim().required()
   });
 
   const reqValidate: object = {
     title: requestBody?.title,
+    description: requestBody?.description
   };
 
   const responseValidation: any = schema.validate(reqValidate);

@@ -12,9 +12,9 @@ export default class GalleryService {
       },
       skip: skip,
       take: itemsPerPage,
-      where: {
-        user: id,
-      }
+      // where: {
+      //   user: id,
+      // }
     });
 
     return PaginationHelper(
