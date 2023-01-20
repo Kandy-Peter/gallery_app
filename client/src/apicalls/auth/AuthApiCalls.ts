@@ -1,26 +1,17 @@
-import { postOrPatchData } from "../ApiCallSetup"
+import { postOrPatchData } from "../ApiCallSetup";
 
-export const LoginApiCall = async(credentials:any):Promise<JSON> =>
-{
-   const addedUrl:string = 'auth/login'; 
+export const LoginApiCall = async (credentials: any): Promise<JSON> => {
+  const addedUrl: string = "auth/login";
 
- return postOrPatchData(addedUrl,credentials,'POST').then((data:any)=>
- {
-   return data;
- }
-  );
+  return postOrPatchData(addedUrl, credentials, "POST").then((data: any) => {
+    return data;
+  });
+};
 
-}
+export const RegisterApiCall = async (credentials: any): Promise<JSON> => {
+  const addedUrl: string = "auth/signup";
 
-
-
-export const RegisterApiCall = async(credentials:any):Promise<JSON> =>
-{
-    const addedUrl:string = 'auth/signup'; 
-
- return postOrPatchData(addedUrl,credentials,'POST').then((data:any)=>
- {
-   return data;
- }
-  );
-}
+  return postOrPatchData(addedUrl, credentials, "POST").then((data: any) => {
+    return data;
+  });
+};

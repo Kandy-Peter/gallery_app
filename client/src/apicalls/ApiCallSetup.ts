@@ -4,7 +4,6 @@ import { JWT_TOKEN_KEY } from "../constants";
 
 export const baseUrl:string = "http://localhost:5000/api/v1/";
 
-
 export const getData =  async (addedUrl:string):Promise<JSON> => 
 {
     const token:string|null|undefined = await Cookies.get(JWT_TOKEN_KEY);

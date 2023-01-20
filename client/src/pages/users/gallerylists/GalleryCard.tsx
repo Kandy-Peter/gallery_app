@@ -18,9 +18,13 @@ export interface GalleryCardProps {
          className="image-for-post"
           src={`${baseUrl}img/${items.image}`}
          />
-         <h4 className="elipse-text">
+         <h4 className="elipse-text centred-text">
              {items.title}
+             <br/>
          </h4>
+         <p className="elipse-text centred-text">
+              {items.description}
+          </p>
        </Card> 
     );
 
