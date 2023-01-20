@@ -9,8 +9,7 @@ const Auth = container.resolve(AuthController);
 const router = Router();    
 //Login route
 router.post("/login", Auth.Login);
-router.post("/register", Auth.Register);
-
+router.post("/signup", Auth.Register);
 
 export default router;
 
