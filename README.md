@@ -10,7 +10,7 @@
 # Image Gallery App
 <!-- Display two images  -->
 <p align="center", style="display: flex; justify-content: space-between;">
-  <img src="./client/src/assets/1.png" alt="screenshot" width="400" height="200">
+  <img src="./client/src/assets/1.png" alt="screenshot" width="150" height="300">
   <img src="./client/src/assets/2.png" alt="screenshot" width="400" height="200">
 </p>
 
