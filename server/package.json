@@ -4,9 +4,12 @@
    "description": "",
    "main": "index.js",
    "scripts": {
+      "client-install": "npm install --prefix ../client",
+      "client": "npm start --prefix ../client",
       "test": "yarn run test",
       "tsc": "tsc",
-      "dev": "nodemon --watch './**/*.ts' --exec 'ts-node --type-check' ./src/server.ts",
+      "server": "nodemon --watch './**/*.ts' --exec 'ts-node --type-check' ./src/server.ts",
+      "dev": "export NODE_ENV=development && concurrently \"yarn run server\" \"yarn run client\"",
       "jest-test": "yarn jest",
       "typeorm": "typeorm-ts-node-commonjs"
    },
@@ -18,6 +21,7 @@
       "@types/helmet": "^4.0.0",
       "bcryptjs": "^2.4.3",
       "body-parser": "^1.19.1",
+      "concurrently": "^7.6.0",
       "cors": "^2.8.5",
       "dotenv": "^16.0.3",
       "express": "^4.17.2",
