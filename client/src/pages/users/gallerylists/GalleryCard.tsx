@@ -17,6 +17,7 @@ export interface GalleryCardProps {
           data-testid="img-display-is-present"
          className="image-for-post"
           src={`${baseUrl}img/${items.image}`}
+          alt={`${items.title}_img`}
          />
          <h4 className="elipse-text centred-text">
              {items.title}

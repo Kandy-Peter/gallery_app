@@ -73,7 +73,7 @@ export class GalleryController {
         "../public/uploads/gallery"
       );
       !fs.existsSync(baseDirectory) ? fs.mkdirSync(baseDirectory) : null;
-      const ext: string = files.image.name.split(".").pop();
+      const ext: string | undefined = files.image.name.split(".").pop();
       const newName: string = Date.now() + "." + ext;
       const directory: string = baseDirectory + "/" + newName;
       let rawData = fs.readFileSync(oldPath);

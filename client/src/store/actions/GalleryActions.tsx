@@ -1,4 +1,4 @@
-import { AnyAction, Dispatch } from "redux";
+import { Dispatch } from "redux";
 import { GetGalleryApiCall } from "../../apicalls/user/GalleryApiCall";
 import * as GalleryActionTypes from '../actiontypes/GalleryActionTypes';
 
@@ -22,7 +22,7 @@ export const GetGalleryListAction = (page:number):any =>
      return GetGalleryApiCall(page).then((res:any)=>
       {
         console.log(res);
-        if(res?.hasOwnProperty('success') && res?.success==true)
+        if(res?.hasOwnProperty('success') && res?.success===true)
         {
          dispatch({type:GalleryActionTypes.GALLERY_LIST_SUCCESS,res});   
         }else
