@@ -1,4 +1,5 @@
 import express from "express"
+import * as dotenv from 'dotenv';
 import * as bodyParser from "body-parser"
 import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
