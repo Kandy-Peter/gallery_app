@@ -1,53 +1,125 @@
-import { AppDataSource } from '../data-source'
-import { NextFunction, Request, Response } from "express"
-import { User } from "../entity/User"
+import "reflect-metadata";
+import { Response, Request } from "express";
+import { UserEntity } from "../database/entities/UserEntity";
+import CustomResponseHelper from "../helpers/CustomResponseHelper";
+import * as bcrypt from "bcryptjs";
+import { RegisterUserValidation } from "../middlewares/validators/RegisterUserValidator";
+import {
+  CreateUserResponseInterface,
+  CreateUserValidationInterface,
+} from "../interfaces/validation/CreateUserInterface";
+import { LoginUserValidation } from "../middlewares/validators/LoginUserValidator";
+import { LoginUserValidationInterface } from "../interfaces/validation/LoginUserInterface";
+import { generateJwtToken } from "../helpers/generateJwt";
+import { IUserService } from "../interfaces/services/IUserService";
+import { autoInjectable, injectable } from "tsyringe";
+import UserService from "../services/UserService";
+import ICustomResponseHelper from "../interfaces/customresponse/ICustomResponseHelper";
 
-export class UserController {
+@autoInjectable()
+export class AuthController {
+  public readonly customResponse: ICustomResponseHelper;
+  public readonly user: UserService;
 
-    private userRepository = AppDataSource.getRepository(User)
+  constructor(userService: UserService, customResponse: CustomResponseHelper) {
+    this.customResponse = customResponse;
+    this.user = userService;
+  }
 
-    async all(request: Request, response: Response, next: NextFunction) {
-        return this.userRepository.find()
+  public Login = async (req: Request, res: Response) => {
+    const bodyItem: LoginUserValidationInterface = req.body;
+
+    const validate = LoginUserValidation(bodyItem);
+
+    if (validate?.errorStatus) {
+      return this.customResponse.setHttpResponse(422, res, false, {
+        message: validate?.error,
+      });
     }
 
-    async one(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id)
-        
+    try {
+      const getSingleUser: UserEntity = await this.user.getSingleUserDetails(
+        req.body.email
+      );
 
-        const user = await this.userRepository.findOne({
-            where: { id }
-        })
+      const checkInvalidEmailOrPassword: Promise<Boolean> =
+        this.checkInvalidPassword(req, res, getSingleUser);
 
-        if (!user) {
-            return "unregistered user"
-        }
-        return user
+      if (!(await checkInvalidEmailOrPassword)) {
+        return this.customResponse.setHttpResponse(400, res, false, {
+          message: "invalid email or password",
+        });
+      }
+      const token = generateJwtToken(getSingleUser);
+
+      return this.customResponse.setHttpResponse(201, res, true, {
+        token: token,
+      });
+    } catch (ex) {
+      return this.customResponse.setHttpResponse(400, res, false, {
+        message: "invalid email or password",
+        error: ex,
+      });
+    }
+  };
+
+  checkInvalidPassword = async (
+    req: Request,
+    res: Response,
+    getSingleUser: UserEntity
+  ): Promise<Boolean> => {
+    const oldPassword: any = getSingleUser?.password;
+
+    const passwordComparisonCheck: boolean =
+      this.checkIfUnencryptedPasswordIsValid(req.body.password, oldPassword);
+
+    if (!passwordComparisonCheck) {
+      return false;
+    }
+    return true;
+  };
+
+  public Register = async (req: Request, res: Response) => {
+    const bodyItem: CreateUserValidationInterface = req.body;
+
+    const validate: any = RegisterUserValidation(bodyItem);
+
+    if (validate?.errorStatus) {
+      return this.customResponse.setHttpResponse(422, res, false, {
+        message: validate?.error,
+      });
     }
 
-    async save(request: Request, response: Response, next: NextFunction) {
-        const { firstName, lastName, age } = request.body;
+    const count = await this.user.checkEmailAlreadyExist(req.body.email);
 
-        const user = Object.assign(new User(), {
-            firstName,
-            lastName,
-            age
-        })
-
-        return this.userRepository.save(user)
+    if (count > 0) {
+      return this.customResponse.setHttpResponse(422, res, false, {
+        message: "email already exist",
+      });
     }
 
-    async remove(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id)
+    const dataToSave: Object = {
+      name: req.body.name,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+    };
 
-        let userToRemove = await this.userRepository.findOneBy({ id })
+    const User: UserEntity = dataToSave as UserEntity;
 
-        if (!userToRemove) {
-            return "this user not exist"
-        }
+    await this.user.createUser(User);
 
-        await this.userRepository.remove(userToRemove)
+    return this.customResponse.setHttpResponse(
+      200,
+      res,
+      true,
+      "data saved successfully"
+    );
+  };
 
-        return "user has been removed"
-    }
-
+  public checkIfUnencryptedPasswordIsValid = (
+    unencryptedPassword: string,
+    encryptedPassword: string
+  ): boolean => {
+    return bcrypt.compareSync(unencryptedPassword, encryptedPassword);
+  };
 }
