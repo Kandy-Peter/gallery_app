@@ -6,7 +6,8 @@
 
   .image-for-post {
     width: 100% !important;
-    height: 280px;
+    height: 80%;
+    object-fit: cover;
   }
   h4,
   .centred-text {

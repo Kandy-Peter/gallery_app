@@ -117,7 +117,7 @@ const  AddImageModal:React.FC<{}> = () =>
                <div className="col-md-12">
 
                <div className="CredentialsInfo" 
-               style={{fontWeight:'bold',color:'red'}}><h5>LOGIN HERE</h5>
+               style={{fontWeight:'bold',color:'red'}}><h5>ADD IMAGE TO THE GALLERY</h5>
               
               <div className="response responseContentDiv" 
                 data-testid="response-modal-div">
@@ -160,7 +160,7 @@ const  AddImageModal:React.FC<{}> = () =>
        <div>
           <TextField
             type="text"
-            className="description-textinput"
+            className="title-textinput"
             margin="normal"
             variant="outlined"
             label="image description"
@@ -203,7 +203,7 @@ const  AddImageModal:React.FC<{}> = () =>
     className="btn-submit-modal-image-add"
     data-testid="btn-submit-image-title-form"
     >
-      LOGIN
+      Add to Gallery
      </Button>
 
     </div>

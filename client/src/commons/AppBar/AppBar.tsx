@@ -122,7 +122,7 @@ export default function PrimarySearchAppBar() {
         <Toolbar>
           
           <Typography className={classes.title} variant="h6" noWrap>
-            Mini-App-Gallery
+            Gallery App
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -266,6 +266,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       position: 'fixed',
       bottom: theme.spacing(2),
       right: theme.spacing(2),
+      zIndex: 999
     },  
     modal: {
       display: 'flex',
