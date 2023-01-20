@@ -1,53 +1,71 @@
-import express from "express"
+import 'reflect-metadata';
+import express ,{NextFunction, Request,Response} from 'express';
+import multer from "multer";
+import routes from './routes/index';
+import * as helmet from "helmet";
+import * as cors from "cors";
 import * as dotenv from 'dotenv';
-import * as bodyParser from "body-parser"
-import { Request, Response } from "express"
-import { AppDataSource } from "./data-source"
-import { Routes } from "./routes"
-import { User } from "./entity/User"
+import { connection } from './database/databaseConnection';
+import ValidationException from './middlewares/CustomErrorException/ValidationExceptionHandler';
+import path from "path";
 
-AppDataSource.initialize().then(async () => {
+export default class Server
+{
 
-    // create express app
-    const app = express()
-    app.use(bodyParser.json())
+    private app: express.Application;
 
-    // register express routes from defined application routes
-    Routes.forEach(route => {
-        (app as any)[route.method](route.route, (req: Request, res: Response, next: Function) => {
-            const result = (new (route.controller as any))[route.action](req, res, next)
-            if (result instanceof Promise) {
-                result.then(result => result !== null && result !== undefined ? res.send(result) : undefined)
+    constructor()
+    {
 
-            } else if (result !== null && result !== undefined) {
-                res.json(result)
+            this.app = express();
+            this.configuration();
+    }
+
+
+    public configuration()
+    {
+        this.app.set('port',process.env.PORT || 3000);
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({extended:true}));
+        this.app.use(cors.default());
+        this.app.use(helmet.default());
+        this.app.use((err:Error, req:Request, res:Response, next:NextFunction) => {
+            if (err instanceof ValidationException) {
+              return res.status(err.status).send({success:err.success,message:err.message});
             }
-        })
-    })
+          });
+        this.app.use('/img',express.static(path.join(__dirname, 'public/uploads/gallery')));
+        this.app.use('/api/v1', routes);
 
-    // setup express app here
-    // ...
+    }
 
-    // start express server
-    app.listen(3000)
 
-    // insert new users for test
-    await AppDataSource.manager.save(
-        AppDataSource.manager.create(User, {
-            firstName: "Timber",
-            lastName: "Saw",
-            age: 27
-        })
-    )
 
-    await AppDataSource.manager.save(
-        AppDataSource.manager.create(User, {
-            firstName: "Phantom",
-            lastName: "Assassin",
-            age: 24
-        })
-    )
+    public start()
+    {
+          if(process.env.NODE_ENV !=='test')
+          {
+            this.app.listen(this.app.get('port'), ()=>
+            {
+                console.log('Server is listening at http://localhost:'+this.app.get('port'));
+            })
+          }
 
-    console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results")
+    }
 
-}).catch(error => console.log(error))
+
+    public appInstance = () =>
+    {
+      return this.app;
+    }
+
+
+}
+
+dotenv.config();
+connection().then(()=>{
+  const server = new Server();
+  return  server.start();
+});
+
+
